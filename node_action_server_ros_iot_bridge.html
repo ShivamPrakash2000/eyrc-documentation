@@ -1,0 +1,175 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+
+<head>
+    <title>node_action_server_ros_iot_bridge</title>
+    <meta charset="utf-8">
+</head>
+
+<body bgcolor="#f0f0f8">
+
+    <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="heading">
+        <tr bgcolor="#8bffdc">
+            <td valign=bottom>&nbsp;<br>
+                <font color="#000000" face="helvetica, arial">
+                    &nbsp;<br><big><big><strong>node_action_server_ros_iot_bridge</strong></big></big></font>
+            </td>
+            <td align=right valign=bottom>
+                <font color="#ffffff" face="helvetica, arial"><a href="node_action_server_ros_iot_bridge.py">Source</a>
+                </font>
+            </td>
+        </tr>
+    </table>
+    <p><tt>This&nbsp;python&nbsp;script&nbsp;will&nbsp;done&nbsp;related&nbsp;to&nbsp;ros_iot_bridge</tt></p>
+            <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+                <tr bgcolor="#ee77aa">
+                    <td colspan=3 valign=bottom>&nbsp;<br>
+                        <font color="#ffffff" face="helvetica, arial"><big><strong>Classes</strong></big></font>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td bgcolor="#ee77aa"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+                    <td>&nbsp;</td>
+                    <td width="100%">
+                        <dl>
+                            <dt>
+                                <font face="helvetica, arial"><a
+                                        href="node_action_server_ros_iot_bridge.html#RosIotBridgeActionServer">RosIotBridgeActionServer</a>
+                                </font>
+                            </dt>
+                        </dl>
+                        <p>
+                            <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+                                <tr bgcolor="#ffc8d8">
+                                    <td colspan=3 valign=bottom>&nbsp;<br>
+                                        <font color="#000000" face="helvetica, arial"><a
+                                                name="RosIotBridgeActionServer">class
+                                                <strong>RosIotBridgeActionServer</strong></a></font>
+                                    </td>
+                                </tr>
+
+                                <tr bgcolor="#ffc8d8">
+                                    <td rowspan=2><tt>&nbsp;&nbsp;&nbsp;</tt></td>
+                                    <td colspan=2><tt><a
+                                                href="#RosIotBridgeActionServer">RosIotBridgeActionServer</a>&nbsp;Class<br>&nbsp;</tt>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>&nbsp;</td>
+                                    <td width="100%">Methods defined here:<br>
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-__init__"><strong>__init__</strong></a>(self)
+                                            </dt>
+                                            <dd><tt>Initialize&nbsp;the&nbsp;Action&nbsp;Server</tt></dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-dispatchedorders"><strong>dispatchedorders</strong></a>(self,
+                                                mymsg)</dt>
+                                            <dd><tt>This&nbsp;is&nbsp;a&nbsp;callback&nbsp;function&nbsp;of&nbsp;ROSTOPIC&nbsp;eyrc/publish/dispatchedorder<br>
+                                                    And&nbsp;Send&nbsp;Data&nbsp;of&nbsp;Dispatched&nbsp;Order&nbsp;to&nbsp;OrdersDispatched&nbsp;Sheet</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-incomingorders"><strong>incomingorders</strong></a>(self,
+                                                note)</dt>
+                                            <dd><tt>Send&nbsp;Data&nbsp;of&nbsp;Incoming&nbsp;Order&nbsp;to&nbsp;IncomingOrders&nbsp;Sheet</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-inventorydatas"><strong>inventorydatas</strong></a>(self,
+                                                send)</dt>
+                                            <dd><tt>Send&nbsp;Data&nbsp;of&nbsp;Packages&nbsp;present&nbsp;on&nbsp;shelf&nbsp;to&nbsp;Inventory&nbsp;Sheet</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-mqtt_sub_callback"><strong>mqtt_sub_callback</strong></a>(self,
+                                                client, userdata, message)</dt>
+                                            <dd><tt>This&nbsp;is&nbsp;a&nbsp;callback&nbsp;function&nbsp;for&nbsp;MQTT&nbsp;Subscriptions</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-on_cancel"><strong>on_cancel</strong></a>(self,
+                                                goal_handle)</dt>
+                                            <dd><tt>This&nbsp;function&nbsp;will&nbsp;be&nbsp;called&nbsp;when&nbsp;Goal&nbsp;Cancel&nbsp;request&nbsp;is&nbsp;send&nbsp;to&nbsp;the&nbsp;Action&nbsp;Server</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-on_goal"><strong>on_goal</strong></a>(self,
+                                                goal_handle)</dt>
+                                            <dd><tt>This&nbsp;function&nbsp;will&nbsp;be&nbsp;called&nbsp;when&nbsp;Action&nbsp;Server&nbsp;receives&nbsp;a&nbsp;Goal</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-process_goal"><strong>process_goal</strong></a>(self,
+                                                goal_handle)</dt>
+                                            <dd><tt>This&nbsp;function&nbsp;is&nbsp;called&nbsp;is&nbsp;a&nbsp;separate&nbsp;thread&nbsp;to&nbsp;process&nbsp;Goal.</tt>
+                                            </dd>
+                                        </dl>
+
+                                        <dl>
+                                            <dt><a
+                                                    name="RosIotBridgeActionServer-shippedorders"><strong>shippedorders</strong></a>(self,
+                                                mymsg)</dt>
+                                            <dd><tt>This&nbsp;is&nbsp;a&nbsp;callback&nbsp;function&nbsp;of&nbsp;ROSTOPIC&nbsp;eyrc/publish/shippedorder<br>
+                                                    And&nbsp;Send&nbsp;Data&nbsp;of&nbsp;Shipped&nbsp;Order&nbsp;to&nbsp;OrdersShipped&nbsp;Sheet</tt>
+                                            </dd>
+                                        </dl>
+
+                                    </td>
+                                </tr>
+                            </table>
+                    </td>
+                </tr>
+            </table>
+            <p>
+                <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+                    <tr bgcolor="#eeaa77">
+                        <td colspan=3 valign=bottom>&nbsp;<br>
+                            <font color="#ffffff" face="helvetica, arial"><big><strong>Functions</strong></big></font>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td bgcolor="#eeaa77"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+                        <td>&nbsp;</td>
+                        <td width="100%">
+                            <dl>
+                                <dt><a name="-main"><strong>main</strong></a>()</dt>
+                                <dd><tt>Main</tt></dd>
+                            </dl>
+                        </td>
+                    </tr>
+                </table>
+                <p>
+                    <table width="100%" cellspacing=0 cellpadding=2 border=0 summary="section">
+                        <tr bgcolor="#55aa55">
+                            <td colspan=3 valign=bottom>&nbsp;<br>
+                                <font color="#ffffff" face="helvetica, arial"><big><strong>Data</strong></big></font>
+                            </td>
+                        </tr>
+
+                        <tr>
+                            <td bgcolor="#55aa55"><tt>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</tt></td>
+                            <td>&nbsp;</td>
+                            <td width="100%"><strong>python3</strong> = False</td>
+                        </tr>
+                    </table>
+</body>
+
+</html>

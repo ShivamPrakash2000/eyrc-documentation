@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="None">
+        
+        
+        <link rel="shortcut icon" href="img/favicon.ico">
+        <title>Vargi Bot</title>
+        <link href="css/bootstrap-custom.min.css" rel="stylesheet">
+        <link href="css/font-awesome.min.css" rel="stylesheet">
+        <link href="css/base.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/github.min.css">
+        <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+
+        <script src="js/jquery-1.10.2.min.js" defer></script>
+        <script src="js/bootstrap-3.0.3.min.js" defer></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+        <script>hljs.initHighlightingOnLoad();</script> 
+    </head>
+
+    <body class="homepage">
+
+        <div class="navbar navbar-default navbar-fixed-top" role="navigation">
+            <div class="container">
+
+                <!-- Collapsed navigation -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href=".">Vargi Bot</a>
+                </div>
+
+                <!-- Expanded navigation -->
+                <div class="navbar-collapse collapse">
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="#" data-toggle="modal" data-target="#mkdocs_search_modal">
+                                <i class="fa fa-search"></i> Search
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+                <div class="col-md-3"><div class="bs-sidebar hidden-print affix well" role="complementary">
+    <ul class="nav bs-sidenav">
+        <li class="main active"><a href="#vargi-bot">Vargi Bot</a></li>
+            <li><a href="#introduction">Introduction</a></li>
+            <li><a href="#implementation">Implementation</a></li>
+            <li><a href="#api-documentation">API Documentation</a></li>
+    </ul>
+</div></div>
+                <div class="col-md-9" role="main">
+
+<h1 id="vargi-bot">Vargi Bot</h1>
+<h2 id="introduction">Introduction</h2>
+<hr />
+<p>We made a Warehouse Management System to sort packages based on incoming customer orders from different cities.</p>
+<ul>
+<li>
+<p>We identified the color of packages, present on the shelf.</p>
+</li>
+<li>
+<p>As the packages are identified, we updated the <strong>inventory</strong> sheet of Inventory Management Spreadsheet.</p>
+</li>
+<li>
+<p>Using ROS-IoT Bridge we received the orders from MQTT Topic. After receiving an order we updated <strong>IncomingOrders</strong> sheet of Inventory Management Spreadsheet.</p>
+</li>
+<li>
+<p>ur5_1 arm will go to grab packages from the shelf and placed on a conveyor belt. After placing a package <strong>OrdersDispatched</strong> sheet of Inventory Management Spreadsheet will be updated and Email will be sent to the user.</p>
+</li>
+<li>
+<p>In case we received multiple orders, we have to deliver the order whose item is Medicine (High Priority) <em>red</em> package. And then the order whose item is Food (Medium Priority) <em>yellow</em> package. And then the order whose item is Clothes (Low Priority) <em>green</em> package.</p>
+</li>
+<li>
+<p>Once the conveyor belt will take the package to ur5_2, the ur5_2 Arm sort the packages to the bins based on the color of the package. For eg. Red Package(Medicine) will go in the Red-Bin, Yellow Package(Food) will go in the Yellow-Bin and Green Package(Clothes) will go in the Green-Bin.</p>
+</li>
+<li>
+<p>After sorting the packages into the bins based on package color, <strong>OrdersShipped</strong> sheet of Inventory Management Spreadsheet will be updated and Email will be sent to the user.</p>
+</li>
+<li>
+<p>As the run is progressing, we updated the <a href="https://shivamprakash2000.github.io/eyrc-dashboard/" target="_blank">Warehouse Inventory Dashboard</a> in real time.</p>
+</li>
+</ul>
+<h3 id="video">Video</h3>
+<p><iframe height="600px" width="1000px" src="https://www.youtube.com/embed/9i8RGD1cVls" allowfullscreen="allowfullscreen"></iframe></p>
+<h2 id="implementation">Implementation</h2>
+<hr />
+<h3 id="rqt-graph">RQT Graph</h3>
+<p><img alt="rosgraph" src="rosgraph.png" />
+<a href="rosgraph.png" target="_blank"><button type="button" style="margin: 0 auto; display: block;}">Expand Graph</button></a></p>
+<ul>
+<li>
+<p><strong>node_action_server_ros_iot_bridge.py</strong></p>
+<ul>
+<li>Call ROSSERVICE <code>eyrc/vb/sendcolourspackages</code>.</li>
+<li>Push datas to different sheets (Inventory, IncomingOrders, OrdersDispatched, OrdersShipped) of <em>Inventory Management Spreadsheet</em> of the warehouse which is a Google Spreadsheet using the ROS- IoT bridge.</li>
+<li>Subscribe MQTT Topic <code>/eyrc/vb/eyrcRAVS/orders</code> for incoming messages(orders).</li>
+<li>Publish incoming messages(orders) on a ROSTOPIC <code>/ros_iot_bridge/mqtt/sub</code>.</li>
+<li>Subscribe ROSTOPIC <code>eyrc/publish/dispatchedorder</code>.</li>
+<li>Subscribe ROSTOPIC <code>eyrc/publish/shippedorder</code>.
+<br></br></li>
+</ul>
+</li>
+<li>
+<p><strong>node_t5_qr_decode.py</strong></p>
+<ul>
+<li>Start ROSSERVICE <code>eyrc/vb/sendcolourspackages</code>.</li>
+<li>Subscribe ROSTOPIC <code>/eyrc/vb/camera_1/image_raw</code>.
+<br></br></li>
+</ul>
+</li>
+<li>
+<p><strong>node_ur5_1_t5.py</strong></p>
+<ul>
+<li>Call ROSSERVICE <code>eyrc/vb/sendcolourspackages</code>.</li>
+<li>Subscribe ROSTOPIC <code>/ros_iot_bridge/mqtt/sub</code>.</li>
+<li>Publish data of dispathed order on a ROSTOPIC <code>eyrc/publish/dispatchedorder</code>.</li>
+<li>Call ROSSERVICE <code>/eyrc/vb/ur5/activate_vacuum_gripper/ur5_1</code>.</li>
+<li>Call ROSSERVICE <code>/eyrc/vb/conveyor/set_power</code>.
+<br></br></li>
+</ul>
+</li>
+<li>
+<p><strong>node_ur5_2_t5.py</strong></p>
+<ul>
+<li>Call ROSSERVICE <code>eyrc/vb/sendcolourspackages</code>.</li>
+<li>Subscribe ROSTOPIC <code>eyrc/publish/dispatchedorder</code>.</li>
+<li>Subscribe ROSTOPIC <code>/eyrc/vb/logical_camera_2</code>.</li>
+<li>Publish data of shipped order on a ROSTOPIC <code>eyrc/publish/shippedorder</code>.</li>
+<li>Call ROSSERVICE <code>/eyrc/vb/ur5/activate_vacuum_gripper/ur5_2</code>.</li>
+<li>Call ROSSERVICE <code>/eyrc/vb/conveyor/set_power</code>.
+<br></br></li>
+</ul>
+</li>
+</ul>
+<p>We identified color of all packages present on the shelf, Using feedback of 2D Camera. We used QR decode method to identify the color of package in ROS Node <strong>node_t5_qr_decode.py</strong> and started a ROS Service <code>eyrc/vb/sendcolourspackages</code>. <strong>node_action_server_ros_iot_bridge.py</strong> request this service it response two lists(array of string object), one is for colours and other is for name of package(eg:- packgen00, packagen01 etc).Then <strong>node_action_server_ros_iot_bridge.py</strong> push data to <code>Inventory</code> sheet of Inventory Management Spreadsheet. Order will published on MQTT Topic <code>/eyrc/vb/eyrcRAVS/orders</code>. <strong>node_action_server_ros_iot_bridge.py</strong> Subscribed MQTT Topic <code>/eyrc/vb/eyrcRAVS/orders</code>. <strong>node_ur5_1_t5.py</strong> and <strong>node_ur5_2_t5.py</strong> request ROS Service <code>eyrc/vb/sendcolourspackages</code> and both node store data that which package is of what color. When <strong>node_action_server_ros_iot_bridge.py</strong> received incomming order in string format using <em>json.loads()</em> and then it converts in dictonary object and push data to <code>IncomingOrders</code> sheet of Inventory Management Spreadsheet. Now it will publish incoming data on ROS Topic <code>/ros_iot_bridge/mqtt/sub</code>.<strong>node_ur5_1_t5.py</strong> subscribe the ROS Topic <code>/ros_iot_bridge/mqtt/sub</code>. After getting incoming order in <strong>node_ur5_1_t5.py</strong> ur5_1 Arm will grab package according to order and place it on conveyor belt. In Case ur5_1 have multiple incomming orders, it will dispatch the order whose item is Medicine(High Priority) <em>red</em> package and then the order whose item is Food(Medium Priority) <em>yellow</em> package and then the order whose item is Clothes(Low Priority) <em>green</em> package. After placing the package on conveyor belt it call ROS Service <code>/eyrc/vb/conveyor/set_power</code> to start the conveyor belt. <strong>node_ur5_1_t5.py</strong> will publish data of this dispatched package on ROS Topic <code>eyrc/publish/dispatchedorder</code>.<strong>node_action_server_ros_iot_bridge.py</strong> subscribe the ROS Topic <code>eyrc/publish/dispatchedorder</code>. After getting the dispatched data, it will push it to <code>OrdersDispatched</code> sheet of Inventory Management Spreadsheet. <strong>node_ur5_2_t5.py</strong> use feedback of ROSTOPIC <code>/eyrc/vb/logical_camera_2</code> to detect models present in <strong><em>logical_camera_2's view</em></strong>. Conveyor belt will stop when package will be between -0.0315 and 0.035.</p>
+<pre><code class="python">if (msgmy.models[0].pose.position.y &lt;= 0.0315 and msgmy.models[0].pose.position.y &gt;= -0.0315):
+</code></pre>
+
+<p>ur5_2 Arm sort the packages to the bins based on the colour of the package and published shipped data on ROS Topic<code>eyrc/publish/shippedorder</code>.
+<strong>node_action_server_ros_iot_bridge.py</strong> pushed shipped data to <code>OrdersShipped</code> sheet of Inventory Management Spreadsheet.</p>
+<h2 id="api-documentation">API Documentation</h2>
+<hr />
+<h3 id="ros-nodes-in-pkg_task5">ROS Nodes in <strong><em>pkg_task5</em></strong></h3>
+<ul>
+<li><a href="node_t5_qr_decode.html">node_t5_qr_decode.py</a></li>
+<li><a href="node_ur5_1_t5.html">node_ur5_1_t5.py</a></li>
+<li><a href="node_ur5_2_t5.html">node_ur5_2_t5.py</a></li>
+</ul>
+<h3 id="ros-nodes-in-pkg_ros_iot_bridge">ROS Nodes in <strong><em>pkg_ros_iot_bridge</em></strong></h3>
+<ul>
+<li><a href="node_action_server_ros_iot_bridge.html">node_action_server_ros_iot_bridge.py</a></li>
+</ul>
+<h3 id="pkg_task5">pkg_task5</h3>
+<pre><code>.
+├── bag_files
+│   └── t5.bag
+├── CMakeLists.txt
+├── config
+│   ├── rviz
+│   │   ├── ur5_1_t5.scene
+│   │   └── ur5_2_t5.scene
+│   └── saved_trajectories
+│       ├── ur5_1
+│       │   ├── box21_middle.yaml
+│       │   ├── box22_middle.yaml
+│       │   ├── go_to_box00_from_homepose.yaml
+│       │   ├── go_to_box01_from_homepose.yaml
+│       │   ├── go_to_box02_from_homepose.yaml
+│       │   ├── go_to_box10_from_homepose.yaml
+│       │   ├── go_to_box11_from_homepose.yaml
+│       │   ├── go_to_box12_from_homepose.yaml
+│       │   ├── go_to_box20_from_homepose.yaml
+│       │   ├── go_to_box21_from_homepose.yaml
+│       │   ├── go_to_box22_from_homepose.yaml
+│       │   ├── go_to_homepose_from_box00.yaml
+│       │   ├── go_to_homepose_from_box01.yaml
+│       │   ├── go_to_homepose_from_box02.yaml
+│       │   ├── go_to_homepose_from_box10.yaml
+│       │   ├── go_to_homepose_from_box11.yaml
+│       │   ├── go_to_homepose_from_box12.yaml
+│       │   ├── go_to_homepose_from_box20.yaml
+│       │   ├── go_to_homepose_from_box21.yaml
+│       │   ├── go_to_homepose_from_box22.yaml
+│       │   └── go_to_homepose.yaml
+│       └── ur5_2
+│           ├── go_to_greenbin_from_homepose.yaml
+│           ├── go_to_homepose_from_greenbin.yaml
+│           ├── go_to_homepose_from_redbin.yaml
+│           ├── go_to_homepose_from_yellowbin.yaml
+│           ├── go_to_homepose.yaml
+│           ├── go_to_redbin_from_homepose.yaml
+│           └── go_to_yellowbin_from_homepose.yaml
+├── launch
+│   └── task5_solution.launch
+├── msg
+│   ├── msgDispatchedOrder.msg
+│   └── msgShippedOrder.msg
+├── package.xml
+├── scripts
+│   ├── node_t5_qr_decode.py
+│   ├── node_ur5_1_t5.py
+│   └── node_ur5_2_t5.py
+└── srv
+    └── sendColoursPackages.srv
+
+10 directories, 40 files
+</code></pre>
+
+<h4 id="config-files">Config files</h4>
+<ol>
+<li>
+<p><strong>rviz</strong></p>
+<ul>
+<li><strong>ur5_1_t5.scene</strong><ul>
+<li>It store the scene for rviz ur5_1.
+<img alt="scene_ur5_1" src="sceneur51.png" /></li>
+</ul>
+</li>
+<li><strong>ur5_2_t5.scene</strong><ul>
+<li>It store the scene for rviz ur5_2.
+<img alt="scene_ur5_2" src="sceneur52.png" /></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>saved_trajectories</strong></p>
+<ul>
+<li>
+<p><strong>ur5_1</strong><br>
+Saved Trajectories for ur5_1 Arm.</p>
+</li>
+<li>
+<p><strong>ur5_2</strong><br>
+Saved Trajectories for ur5_2 Arm.</p>
+</li>
+</ul>
+</li>
+</ol>
+<h4 id="messages-files">Messages files</h4>
+<ul>
+<li><strong><em>msgDispatchedOrder.msg</em></strong><ul>
+<li>This message file use for publish data on <strong>ROSTOPIC</strong> <code>eyrc/publish/dispatchedorder</code>.</li>
+</ul>
+</li>
+</ul>
+<pre><code>string message
+</code></pre>
+
+<ul>
+<li><strong><em>msgShippedOrder.msg</em></strong><ul>
+<li>This message file use for publish data on <strong>ROSTOPIC</strong> <code>eyrc/publish/shippedorder</code>.</li>
+</ul>
+</li>
+</ul>
+<pre><code>string message
+</code></pre>
+
+<h4 id="service-files">Service files</h4>
+<ul>
+<li><strong><em>sendColoursPackages.srv</em></strong><ul>
+<li>This service file use for <strong>ROSSERVICE</strong> <code>eyrc/vb/sendcolourspackages</code>.</li>
+</ul>
+</li>
+</ul>
+<pre><code>bool send
+---
+string[] colours
+string[] packages
+</code></pre>
+
+<h3 id="pkg_ros_iot_bridge">pkg_ros_iot_bridge</h3>
+<pre><code>.
+├── action
+│   └── msgRosIot.action
+├── CMakeLists.txt
+├── config
+│   └── config_pyiot.yaml
+├── launch
+├── msg
+│   └── msgMqttSub.msg
+├── package.xml
+├── scripts
+│   ├── node_action_server_ros_iot_bridge.py
+│   └── pyiot
+│       ├── __init__.py
+│       ├── __init__.pyc
+│       ├── iot.py
+│       └── iot.pyc
+└── src
+
+7 directories, 10 files
+</code></pre>
+
+<h4 id="config-files_1">Config files</h4>
+<ul>
+<li>config_pyiot.yaml<ul>
+<li>Store data of spreadsheet Id and MQTT Topic.</li>
+</ul>
+</li>
+</ul>
+<h4 id="messages-files_1">Messages files</h4>
+<ul>
+<li>msgMqttSub.msg<ul>
+<li>This message file use for publish data on <strong>ROSTOPIC</strong> <code>/ros_iot_bridge/mqtt/sub</code>.</li>
+</ul>
+</li>
+</ul>
+<pre><code>time timestamp
+string topic
+string message
+</code></pre></div>
+        </div>
+
+        <footer class="col-md-12">
+            <hr>
+            <p>Documentation built with <a href="https://www.mkdocs.org/">MkDocs</a>.</p>
+        </footer>
+        <script>
+            var base_url = ".",
+                shortcuts = {"search": 83, "next": 78, "help": 191, "previous": 80};
+        </script>
+        <script src="js/base.js" defer></script>
+        <script src="search/main.js" defer></script>
+
+        <div class="modal" id="mkdocs_search_modal" tabindex="-1" role="dialog" aria-labelledby="Search Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Search</h4>
+            </div>
+            <div class="modal-body">
+                <p>
+                    From here you can search these documents. Enter
+                    your search terms below.
+                </p>
+                <form role="form">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search..." id="mkdocs-search-query" title="Type search term here">
+                    </div>
+                </form>
+                <div id="mkdocs-search-results"></div>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div><div class="modal" id="mkdocs_keyboard_modal" tabindex="-1" role="dialog" aria-labelledby="Keyboard Shortcuts Modal" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <h4 class="modal-title" id="exampleModalLabel">Keyboard Shortcuts</h4>
+            </div>
+            <div class="modal-body">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th style="width: 20%;">Keys</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="help shortcut"><kbd>?</kbd></td>
+                    <td>Open this help</td>
+                  </tr>
+                  <tr>
+                    <td class="next shortcut"><kbd>n</kbd></td>
+                    <td>Next page</td>
+                  </tr>
+                  <tr>
+                    <td class="prev shortcut"><kbd>p</kbd></td>
+                    <td>Previous page</td>
+                  </tr>
+                  <tr>
+                    <td class="search shortcut"><kbd>s</kbd></td>
+                    <td>Search</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+</div>
+
+    </body>
+</html>
+
+<!--
+MkDocs version : 1.0.4
+Build Date UTC : 2021-02-24 14:39:08
+-->
